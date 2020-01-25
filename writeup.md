@@ -38,11 +38,11 @@ After unpacking the provided dataset I used pandas and other native functions to
 
 I sampled one image from the dataset for each unique class. This provides a glimpse into the differences in each traffic sign image.
 
-<<<<<PLACE FULL DATA SET HERE>>>>>>
+<img src="writeup_assets/full.png" width="800" />
   
 To better understand what the data looks like I plotted a histogram to understand the frequency and distribution of each traffic sign type across all three of the datasets. What I'm seeing is that there are some classes that occur significantly less frequently than others in the data which may make it more challenging to confidently predict those classes once the model is trained. The distributions appear similar across the three datasets.
 
-<<<<<<<PLACE DATA HISTORGRAM HERE>>>>>>>>
+<img src="writeup_assets/dist.png" width="800" />
   
 ### Design and Test a Model Architecture
 
@@ -56,7 +56,7 @@ My image pre-processing pipeline was inspired by the research paper "Multi-colum
 5. Apply Local Contrast Normalization.
 6. Finally, center the image values around 0 between -1 and 1.
 
-<<<<<<<PLACE PIPELINE HERE>>>>>>>>>>
+<img src="writeup_assets/pre.png" width="800" />
 
 #### OPTIONAL: As described in the "Stand Out Suggestions" part of the rubric, if you generated additional data for training, describe why you decided to generate additional data, how you generated the data, and provide example images of the additional data. Then describe the characteristics of the augmented training set like number of images in the set, number of images for each class, etc.
 
@@ -106,7 +106,7 @@ During training, for each epoch I would divide my training data into small batch
 
 I completed my model training with a **validation set accuracy of 96.3%** and a **test set validation of 94.2%**. You can see the improvement of my model's performance over time (with each epoch) in terms of validation set accuracy and loss below.
 
-<<<<<<<< INCLUDE PEROFMRNACE PER EPOCH>>>>>>>>
+<img src="writeup_assets/perf.png" width="800" />
 
 To start building my model, I chose to begin with the LeNet model architecture we studied in class. Using the **out-of-the-box LeNet architecture with grayscale input images that were normalized** between (-1, 1) I was already able to reach a validation accuracy of **~90%**. Improving the accuracy from there was the big challenge of this project.
 
@@ -129,7 +129,7 @@ There were two primary approaches that I knew of to improve the accuracy. Approa
 
 I found several German traffic sign images online. I took five that I felt confident my model could predict and one that I thought it wouldn't be able to predict. I cropped the images down to 32 by 32 pixels so that I could use them in my model and I manually labelled them according to the classes my model knows.
 
-<<<<<<< NEW IMAGES HERE >>>>>
+<img src="writeup_assets/new.png" width="800" />
 
 The fourth image in the dataset will be difficult to classify for two primary reasons. First, the image has a secondary sign ("Schule") included within the first sign that may confuse my model. Second, the graphic art of the two people walking across the street looks slightly different compared to the images in the training data.
 
