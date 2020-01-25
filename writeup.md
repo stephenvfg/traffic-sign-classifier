@@ -1,7 +1,6 @@
 # **Traffic Sign Recognition** 
 
 ## Writeup
----
 
 **Build a Traffic Sign Recognition Project**
 
@@ -14,7 +13,7 @@ The goals / steps of this project are the following:
 * Summarize the results with a written report
 
 ## Rubric Points
-### Here I will consider the [rubric points](https://review.udacity.com/#!/rubrics/481/view) individually and describe how I addressed each point in my implementation.  
+Here I will consider the [rubric points](https://review.udacity.com/#!/rubrics/481/view) individually and describe how I addressed each point in my implementation.  
 
 ---
 ### Writeup / README
@@ -80,15 +79,46 @@ My model was largely based on the LeNet Convolutional Neural Network studied in 
 | Activation            | 10 x 10 x 32      | 10 x 10 x 32      | ReLu activation                                                  |
 | Pooling #2            | 10 x 10 x 32      | 5 x 5 x 32        | Max pooling with 2x2 kernel, 2x2 stride, valid padding           |
 | Flatten               | 5 x 5 x 32        | 800               | Scaled up from 400 -> 800 due to previous depth increases        |
-| Fully connected       | 800               | 240               | Scaled up from 120 -> 240 due to previous depth increases        |
+| Fully connected #1    | 800               | 240               | Scaled up from 120 -> 240 due to previous depth increases        |
 | Activation            | 240               | 240               | ReLu activation                                                  |
 | Dropout               | 240               | 240               | Added to improve accuracy, reduce overfitting. Rate = 0.5        |
-| Fully connected       | 240               | 168               | Scaled up from 84 -> 168 due to previous depth increases         |
+| Fully connected #2    | 240               | 168               | Scaled up from 84 -> 168 due to previous depth increases         |
 | Activation            | 168               | 168               | ReLu activation                                                  |
 | Dropout               | 168               | 168               | Added to improve accuracy, reduce overfitting. Rate = 0.5        |
-| Fully connected       | 168               | 43                | Final fully connected layer to return the model logits           |
+| Fully connected #3    | 168               | 43                | Final fully connected layer to return the model logits           |
 
 Several other adjustments were explored but ultimately dropped since they either hurt the model accuracy or added complexity while doing nothing to improve the output. For example:
 * I explored using a Linear Scaled Hyperbolic Tangent as an activation function instead of ReLu ([inspired from here](https://forums.fast.ai/t/lisht-linear-scaled-hyperbolic-tangent-better-than-relu-testing-it-out/44002)).
 * I added dropouts with low dropout rates after the hidden layers. This actually made my accuracy improvement rate less stable from epoch to epoch.
 * Instead of Max pooling I tried to use Average pooling but there was no benefit.
+
+#### 3. Describe how you trained your model. The discussion can include the type of optimizer, the batch size, number of epochs and any hyperparameters such as learning rate.
+
+To train my model I used the following configuration:
+* *I increased my Epochs from 10 to 32*. I saw a significant increase in accuracy and reduction in loss by doing this, although my model took much longer to train.
+* For the same reason as above I *cut my batch size in half down to 64*.
+* I started with a *learning rate of 0.001*. At the end of every epoch I multiplied the learning rate by a *decay parameter of 0.96*. This enabled me to add several more epochs and for the adjustments to my weights/biases to become more and more precise at each iteration.
+* I used the out-of-the-box *Adam apative learning rate optimization algorithm*.
+
+During training, for each epoch I would divide my training data into small batch sizes and run those batches thrrough my training model. I would train my model on the small batches until I iterated through the entire training dataset. At this point I would calculate the accuracy and loss values for that epoch, then slightly decay the learning rate, and then move on to the next epoch. At the end of the last epoch I would declare the model complete and store the calculated weights/biases.
+
+#### 4. Describe the approach taken for finding a solution and getting the validation set accuracy to be at least 0.93. Include in the discussion the results on the training, validation and test sets and where in the code these were calculated. Your approach may have been an iterative process, in which case, outline the steps you took to get to the final solution and why you chose those steps. Perhaps your solution involved an already well known implementation or architecture. In this case, discuss why you think the architecture is suitable for the current problem.
+
+I completed my model training with a *validation set accuracy of 96.3%* and a *test set validation of 94.2%*. You can see the improvement of my model's performance over time (with each epoch) in terms of validation set accuracy and loss below.
+
+<<<<<<<< INCLUDE PEROFMRNACE PER EPOCH>>>>>>>>
+
+To start building my model, I chose to begin with the LeNet model architecture we studied in class. Using the *out-of-the-box LeNet architecture with grayscale input images that were normalized* between (-1, 1) I was already able to reach a validation accuracy of *~90%*. Improving the accuracy from there was the big challenge of this project.
+
+There were two primary approaches that I knew of to improve the accuracy. Approach #1 was to enhance the data *via image pre-processing*. Using the pipeline discussed above I was able to bring the validation accuracy *above 93%*.
+
+Some approaches did not work:
+* During my first attempts to improve the model, I swapped the ReLu activation functions with LiSHT activation functions. Doing this reduced my model's accuracy so I quickly scrapped this approach.
+* I attempted to manipulate image data (via rotations and translations) in-between training epochs. I'm not sure if my implementation was off or if this is simply a bad idea but it tanked my validation accuracy below 80%.
+* I added dropout after the max pooling functions thinking that it would improve accuracy. In fact, this was too soon in the model to add dropout (at a high rate of 50%) and it also crippled my model and reduced validation accuracy.
+
+Other approaches worked better:
+* Increasing epochs and decreasing the batch sizes (to reasonable limits) brought up my model's accuracy.
+* After a certain number of epochs, my validation accuracy would jump back and forth between the same range of accuracies because the learning rate was too high. I applied a learning rate decay of 0.96 per epoch so that the model adjustments would become more precise in the later iterations and my model would be able to continue improving.
+* I did not change the order of type of layers in the LeNet model, but I did make the convolutional layers deeper (6->16 and 16->32). This improved the model accuracy but also may have increased risk of overfitting. I accounted for this in my next adjustment.
+* Adding dropouts after the fully connected layers significantly improved accuracy and offset some of the risk of overfitting.
