@@ -95,30 +95,72 @@ Several other adjustments were explored but ultimately dropped since they either
 #### 3. Describe how you trained your model. The discussion can include the type of optimizer, the batch size, number of epochs and any hyperparameters such as learning rate.
 
 To train my model I used the following configuration:
-* *I increased my Epochs from 10 to 32*. I saw a significant increase in accuracy and reduction in loss by doing this, although my model took much longer to train.
-* For the same reason as above I *cut my batch size in half down to 64*.
-* I started with a *learning rate of 0.001*. At the end of every epoch I multiplied the learning rate by a *decay parameter of 0.96*. This enabled me to add several more epochs and for the adjustments to my weights/biases to become more and more precise at each iteration.
-* I used the out-of-the-box *Adam apative learning rate optimization algorithm*.
+* **I increased my Epochs from 10 to 32**. I saw a significant increase in accuracy and reduction in loss by doing this, although my model took much longer to train.
+* For the same reason as above I **cut my batch size in half down to 64**.
+* I started with a **learning rate of 0.001**. At the end of every epoch I multiplied the learning rate by a **decay parameter of 0.96**. This enabled me to add several more epochs and for the adjustments to my weights/biases to become more and more precise at each iteration.
+* I used the out-of-the-box **Adam apative learning rate optimization algorithm**.
 
 During training, for each epoch I would divide my training data into small batch sizes and run those batches thrrough my training model. I would train my model on the small batches until I iterated through the entire training dataset. At this point I would calculate the accuracy and loss values for that epoch, then slightly decay the learning rate, and then move on to the next epoch. At the end of the last epoch I would declare the model complete and store the calculated weights/biases.
 
 #### 4. Describe the approach taken for finding a solution and getting the validation set accuracy to be at least 0.93. Include in the discussion the results on the training, validation and test sets and where in the code these were calculated. Your approach may have been an iterative process, in which case, outline the steps you took to get to the final solution and why you chose those steps. Perhaps your solution involved an already well known implementation or architecture. In this case, discuss why you think the architecture is suitable for the current problem.
 
-I completed my model training with a *validation set accuracy of 96.3%* and a *test set validation of 94.2%*. You can see the improvement of my model's performance over time (with each epoch) in terms of validation set accuracy and loss below.
+I completed my model training with a **validation set accuracy of 96.3%** and a **test set validation of 94.2%**. You can see the improvement of my model's performance over time (with each epoch) in terms of validation set accuracy and loss below.
 
 <<<<<<<< INCLUDE PEROFMRNACE PER EPOCH>>>>>>>>
 
-To start building my model, I chose to begin with the LeNet model architecture we studied in class. Using the *out-of-the-box LeNet architecture with grayscale input images that were normalized* between (-1, 1) I was already able to reach a validation accuracy of *~90%*. Improving the accuracy from there was the big challenge of this project.
+To start building my model, I chose to begin with the LeNet model architecture we studied in class. Using the **out-of-the-box LeNet architecture with grayscale input images that were normalized** between (-1, 1) I was already able to reach a validation accuracy of **~90%**. Improving the accuracy from there was the big challenge of this project.
 
-There were two primary approaches that I knew of to improve the accuracy. Approach #1 was to enhance the data *via image pre-processing*. Using the pipeline discussed above I was able to bring the validation accuracy *above 93%*.
+There were two primary approaches that I knew of to improve the accuracy. Approach #1 was to enhance the data **via image pre-processing**. Using the pipeline discussed above I was able to bring the validation accuracy **above 93%**.
 
-Some approaches did not work:
+**Some approaches did not work:**
 * During my first attempts to improve the model, I swapped the ReLu activation functions with LiSHT activation functions. Doing this reduced my model's accuracy so I quickly scrapped this approach.
 * I attempted to manipulate image data (via rotations and translations) in-between training epochs. I'm not sure if my implementation was off or if this is simply a bad idea but it tanked my validation accuracy below 80%.
 * I added dropout after the max pooling functions thinking that it would improve accuracy. In fact, this was too soon in the model to add dropout (at a high rate of 50%) and it also crippled my model and reduced validation accuracy.
 
-Other approaches worked better:
+**Other approaches worked better to achieve a validation accuracy above 96%:**
 * Increasing epochs and decreasing the batch sizes (to reasonable limits) brought up my model's accuracy.
 * After a certain number of epochs, my validation accuracy would jump back and forth between the same range of accuracies because the learning rate was too high. I applied a learning rate decay of 0.96 per epoch so that the model adjustments would become more precise in the later iterations and my model would be able to continue improving.
 * I did not change the order of type of layers in the LeNet model, but I did make the convolutional layers deeper (6->16 and 16->32). This improved the model accuracy but also may have increased risk of overfitting. I accounted for this in my next adjustment.
 * Adding dropouts after the fully connected layers significantly improved accuracy and offset some of the risk of overfitting.
+
+### Test a Model on New Images
+
+#### 1. Choose five German traffic signs found on the web and provide them in the report. For each image, discuss what quality or qualities might be difficult to classify.
+
+I found several German traffic sign images online. I took five that I felt confident my model could predict and one that I thought it wouldn't be able to predict. I cropped the images down to 32 by 32 pixels so that I could use them in my model and I manually labelled them according to the classes my model knows.
+
+<<<<<<< NEW IMAGES HERE >>>>>
+
+The fourth image in the dataset will be difficult to classify for two primary reasons. First, the image has a secondary sign ("Schule") included within the first sign that may confuse my model. Second, the graphic art of the two people walking across the street looks slightly different compared to the images in the training data.
+
+The five other images very closely resemble what we have in the data set and should be simple to classify.
+
+#### 2. Discuss the model's predictions on these new traffic signs and compare the results to predicting on the test set. At a minimum, discuss what the predictions were, the accuracy on these new predictions, and compare the accuracy to the accuracy on the test set (OPTIONAL: Discuss the results in more detail as described in the "Stand Out Suggestions" part of the rubric).
+
+| Image         	    	    | Prediction	            | 
+|:--------------------------:|:-----------------------:| 
+| Turn Left         		    | Turn Left           		| 
+| No Passing         		    | No Passing          		| 
+| Speed Limit 30         	 | Speed Limit 30          	| 
+| Children Crossing          | Beware of Ice         | 
+| Speed Limit 100          | Speed Limit 100          | 
+| Road Work Ahead         	| Road Work Ahead        	| 
+
+The model **accurately predicted 5 out of the 6** new images - and as I thought, it wrongly predicted the fourth image that looked a little different than what the model is used to seeing.
+
+That being said, the model acheived an **83.33% accuracy rate on these images** compared to the 94.2% test set validation rate. This is slightly lower than expected but the sample size is so small that it doesn't feel surprising.
+
+#### 3. Describe how certain the model is when predicting on each of the five new images by looking at the softmax probabilities for each prediction. Provide the top 5 softmax probabilities for each image along with the sign type of each probability. (OPTIONAL: as described in the "Stand Out Suggestions" part of the rubric, visualizations can also be provided such as bar charts)
+
+For the signs that my model accurately identified, the softmax probability came extremely close to 100% for that classification. For the incorrect image classification the probability was barely over 50%. If I were to use this model in a production environment I could envision several rules and safeguards that would be useful where I could ignore classifications that had softmax probabilities below some threshold.
+
+| Sign          | #1 Prediction & Prob. | #2 Prediction & Prob. | #3 Prediction & Prob. | #4 Prediction & Prob. | #5 Prediction & Prob. |
+|:-------------:|:---------------------:|:---------------------:|:---------------------:|:---------------------:|:---------------------:|
+| Turn Left         | 34 --> 99.99816%  | 11 --> 0.00117%       | 38 --> 0.00054%       | 40 --> 0.00009%       | 14 --> 0.00004%       |
+| No Passing        | 9 --> 100.00000%  | 35 --> 0.00000%       | 10 --> 0.00000%       | 16 --> 0.00000%       | 12 --> 0.00000%       |
+| Speed Limit 30    | 1 --> 99.99999%   | 4 --> 0.00001%        | 5 --> 0.00000%        | 0 --> 0.00000%        | 7 --> 0.00000%        |
+| Children Crossing | 30 --> 56.31258%  | 12 --> 36.47871%      | 20 --> 6.64123%       | 24 --> 0.18723%       | 25 --> 0.12744%       |
+| Speed Limit 100   | 7 --> 100.00000%  | 40 --> 0.00000%       | 5 --> 0.00000%        | 1 --> 0.00000%        | 8 --> 0.00000%        |
+| Road Work Ahead   | 25 --> 100.00000% | 22 --> 0.00000%       | 29 --> 0.00000%       | 24 --> 0.00000%       | 18 --> 0.00000%       |
+
+[Check out the sign names and code numbers list as reference.](https://github.com/stephenvfg/traffic-sign-classifier/blob/master/signnames.csv)
